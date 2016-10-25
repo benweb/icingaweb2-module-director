@@ -262,15 +262,26 @@ class IcingaConfigHelper
         return $seconds . 's';
     }
 
-    private static function renderStringWithVariables($string) {
-        $string = preg_replace('/(?<!\$)\$([\w\.]+)\$(?!\$)/', '" + ${1} + "', $string);
-        $string = '"' . $string . '"';
+    public static function stringHasMacro($string)
+    {
+        return preg_match('/(?<!\$)\$[\w\.]+\$(?!\$)/', $string);
+    }
+
+    public static function renderStringWithVariables($string)
+    {
+        $string = preg_replace(
+            '/(?<!\$)\$([\w\.]+)\$(?!\$)/',
+            '" + ${1} + "',
+            static::renderString($string)
+        );
+
         if (substr($string, 0, 5) === '"" + ') {
             $string = substr($string, 5);
         }
         if (substr($string, -5) === ' + ""') {
             $string = substr($string, 0, -5);
         }
+
         return $string;
     }
 }
